@@ -1,30 +1,20 @@
-from requests_html import HTML, HTMLSession
+import time
+from notebooks.utils import news_scraper
+from notebooks.utils import sentiment_analysis
 
-session = HTMLSession()
-url = 'https://news.google.com/search?q=xrp%20when%3A1d&hl=en-US&gl=US&ceid=US%3Aen'
 
-r = session.get(url)
+while True:
 
-r.html.render(sleep=1, scrolldown=0)
+    date = '1h'
+    prediction = news_scraper.get_news(period=date, path='data')
 
-articles = r.html.find('article')
+    if prediction < 0:
+        print("S")
 
-newslist = []
+    elif prediction > 0:
+        print("B")
+    else:
+        print("chillin")
 
-#loop through each article to find the title and link. try and except as repeated articles from other sources have different h tags.
-for item in articles:
-    try:
-        newsitem = item.find('h3', first=True)
-        title = newsitem.text
-        link = newsitem.absolute_links
-        newsarticle = {
-            'title': title,
-            'link': link 
-        }
-        newslist.append(newsarticle)
-    except:
-       pass
-
-#print the length of the list
-print(len(newslist))
+    time.sleep(1800)
 
